@@ -1,0 +1,26 @@
+{
+  "enabled_by_default": true,
+  "update_interval_seconds": 1.0,
+  "switch_cooldown_seconds": 3.0,
+  "switch_margin": 0.15,
+  "crowd_radius": 12.0,
+  "penetration_scale": 1.0,
+  "speed_scale": 0.5,
+  "injured_arm_penalty": 0.2,
+  "weights": {
+    "damage": 1.0,
+    "armor": 0.8,
+    "crowd": 0.7,
+    "environment": 1.0,
+    "distance": 0.5,
+    "skill": 0.6,
+    "robot": 0.5,
+    "threat": 0.3
+  },
+  "manual_hotkeys": {
+    "toggle_automation": "F6",
+    "force_primary": "F7",
+    "force_secondary": "F8",
+    "resume_auto": "F9"
+  }
+}
