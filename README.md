@@ -23,6 +23,15 @@ Adaptive Weapon Tactics is a prototype design and decision-engine scaffold for K
 
 The decision engine expects normalized data from an adapter. It does not itself inspect Kenshi entities, infer armor values from game objects, register hotkeys, or change a character's weapon. Those tasks require verified RE_Kenshi/KenshiLua API bindings and must be implemented in the integration layer.
 
+## First runtime check
+
+`src/WeaponProbe.cpp` is a deliberately read-only RE_Kenshi plugin source for
+the first game-side check. Build it against the matching KenshiLib SDK, load it
+through RE_Kenshi, then load a save with a player character equipped with two
+melee weapons. The debug log should identify the current weapon as `primary` or
+`secondary` and print both runtime section names. It does not call
+`drawWeapon`, register hotkeys, or mutate inventory.
+
 ## Planned controls
 
 The intended default controls are:

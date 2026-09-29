@@ -66,6 +66,7 @@ The RE_Kenshi project notes that plugins can use precompiled RE_Kenshi/KenshiLib
 - [x] Locate a nearby-character query API.
 - [x] Verify active weapon read (`Character::getCurrentWeapon()`).
 - [x] Identify equipped primary/secondary weapons (`Inventory::getPrimaryWeapon()` / `getSecondaryWeapon()`).
+- [ ] Build and run `src/WeaponProbe.cpp` against the matching KenshiLib SDK; record the one-time debug output for a character with two melee weapons.
 - [ ] Verify `CharacterHuman::drawWeapon(desired, current->inventorySection)` in a live game and confirm the postcondition.
 - [ ] Verify live weapon stats and armor values.
 - [ ] Verify indoor detection and weapon indoor constraints.
