@@ -1,42 +1,51 @@
 # Runtime integration contract
 
-This document defines what a future RE_Kenshi/KenshiLua integration adapter must provide. The exact game API names are intentionally not guessed.
+## Confirmed RE_Kenshi plugin model
+
+The public RE_Kenshi/KenshiLib examples use native C++ DLL plugins with an exported `startPlugin()` entry point. The repository's current `src/decision.lua` is therefore not a directly loadable RE_Kenshi plugin; it is a standalone decision prototype. Do not add a Lua runtime or Lua-to-C++ bridge unless a concrete need and supported runtime are established.
+
+Verified from the published KenshiLib headers/examples:
+
+- `startPlugin()` is the plugin entry point.
+- `ou->player->getAllPlayerCharacters()` exposes the player-controlled character list in example code.
+- `GameWorld::getCharactersWithinSphere(...)` exists for nearby-object queries.
+- Inventory APIs expose sections and items, but the exact safe operation for switching the active weapon has not yet been verified.
+
+The RE_Kenshi project notes that plugins can use precompiled RE_Kenshi/KenshiLib binaries. Building the library itself has legacy Visual Studio 2010 x64 toolchain requirements. The plugin examples target native C++.
 
 ## Adapter responsibilities
 
-1. Enumerate player-controlled characters and store a per-character enabled flag.
-2. Read the current active weapon slot and the equipped primary/secondary weapon stats.
-3. Query nearby hostile combatants, with stable identity and distance.
-4. Normalize armor, cut/blunt resistance, robot classification, weapon reach/damage/speed/cleave, and indoor/space restrictions into the fields documented in `src/decision.lua`.
-5. Detect consciousness and injured arms.
-6. Call `decision.decide(snapshot, config)` on a timer.
-7. If the returned slot differs from the current slot, invoke the verified game weapon-switch action and confirm the result.
-8. Register manual controls and maintain `manual_mode` per character:
-   - `auto`: use scoring engine.
-   - `primary`: force primary while available.
-   - `secondary`: force secondary while available.
+1. Enumerate player-controlled characters and maintain per-character enabled state.
+2. Read the active weapon slot and the two equipped weapon items.
+3. Query nearby hostile characters and calculate distance.
+4. Normalize weapon damage, reach, attack speed, armor interaction, indoor constraints, and character weapon skill into decision inputs.
+5. Determine whether the character is conscious and whether relevant limbs are injured or missing.
+6. Run the decision logic at a safe, bounded cadence.
+7. Invoke a verified weapon-switch operation only when the desired slot differs from the active slot, then confirm the result.
+8. Support manual modes: `auto`, `primary`, and `secondary`.
 9. Expose per-character and party-wide automation toggles.
 
 ## Important safety rules
 
 - Do not issue a switch command during an attack animation unless the verified API explicitly supports it.
 - Do not switch if the desired slot is empty, inaccessible, or unusable due to limb loss.
-- Avoid changing equipment items; this prototype only switches between already-equipped slots.
-- Clear or suspend manual state when a character is removed from the player party.
-- Log missing or unsupported data and fall back to keeping the current weapon.
+- Avoid changing inventory items; the intended feature only switches between already-equipped weapons.
+- Clear or suspend manual state when a character leaves the player party.
+- If required data is unavailable, keep the current weapon and log a concise diagnostic.
 
 ## Validation checklist
 
-- [ ] Confirm RE_Kenshi runtime and supported plugin/script entrypoint.
-- [ ] Confirm whether KenshiLua is required and which Lua version it embeds.
-- [ ] Verify active weapon-slot read and switch calls in a disposable save.
-- [ ] Verify indoor detection and weapon indoor penalty representation.
-- [ ] Verify armor and damage values are read from live game objects.
-- [ ] Verify hostile filtering does not include allies, prisoners, or neutral NPCs.
+- [x] Confirm RE_Kenshi native plugin entry point and find player-party enumeration.
+- [x] Locate a nearby-character query API.
+- [ ] Verify active weapon-slot read and safe switch operation.
+- [ ] Identify how equipped weapon slots map to inventory sections/items.
+- [ ] Verify live weapon stats and armor values.
+- [ ] Verify indoor detection and weapon indoor constraints.
+- [ ] Verify hostile filtering excludes allies, prisoners, and neutral NPCs.
 - [ ] Test one character with two valid weapons.
 - [ ] Test missing secondary weapon and injured/absent arms.
 - [ ] Test indoor fights and multiple enemies.
-- [ ] Test manual lock precedence and cooldown.
-- [ ] Test save/load persistence of settings.
+- [ ] Test manual mode precedence, cooldown, and party membership changes.
+- [ ] Test save/load behavior.
 
-Until these checks are complete, this repository should be treated as a prototype decision engine, not a ready-to-install mod.
+**Status:** still a prototype, not a ready-to-install mod. The immediate blocker is confirming the game's actual active-weapon switching mechanism before implementing a native plugin.
