@@ -32,6 +32,10 @@ melee weapons. The debug log should identify the current weapon as `primary` or
 `secondary` and print both runtime section names. It does not call
 `drawWeapon`, register hotkeys, or mutate inventory.
 
+`AdaptiveWeaponTactics.vcxproj` is the minimal x64 DLL project, based on the
+official HelloWorld example. Set `KENSHILIB_DIR` to the matching SDK root and
+build `Release|x64`; it links `kenshilib.lib` and outputs the probe DLL.
+
 ## Planned controls
 
 The intended default controls are:
