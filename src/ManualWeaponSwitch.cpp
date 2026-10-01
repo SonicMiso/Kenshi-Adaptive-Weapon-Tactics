@@ -4,6 +4,7 @@
 #include <kenshi/GameWorld.h>
 #include <kenshi/Globals.h>
 #include <kenshi/PlayerInterface.h>
+#include "ManualWeaponInput.h"
 
 // Manual Weapon Switch runtime
 //
@@ -15,15 +16,6 @@ static void (*mainLoopOriginal)(GameWorld*, float);
 
 namespace ManualWeaponSwitch
 {
-    enum class Mode
-    {
-        Auto,
-        Primary,
-        Secondary
-    };
-
-    static Mode currentMode = Mode::Auto;
-
     static Character* getSelectedCharacter()
     {
         if (!ou || !ou->player)
@@ -41,8 +33,6 @@ namespace ManualWeaponSwitch
         if (current == weapon)
             return true;
 
-        // drawWeapon is the native weapon draw/switch path.
-        // The previous inventory section is required by Kenshi.
         if (!current)
         {
             DebugLog("Manual Weapon Switch: no current weapon section");
@@ -83,8 +73,19 @@ namespace ManualWeaponSwitch
         if (!character || !character->getInventory())
             return;
 
-        // Input handling will call switchToPrimary/switchToSecondary.
-        // Keep update empty until commands are connected.
+        switch (ManualWeaponInput::poll())
+        {
+        case ManualWeaponInput::Action::Primary:
+            switchToPrimary(character);
+            break;
+
+        case ManualWeaponInput::Action::Secondary:
+            switchToSecondary(character);
+            break;
+
+        default:
+            break;
+        }
     }
 }
 
