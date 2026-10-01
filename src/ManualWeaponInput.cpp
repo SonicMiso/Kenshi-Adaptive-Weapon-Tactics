@@ -1,11 +1,7 @@
-#include "ManualWeaponInput.h"
+#include "ManualWeaponInputProvider.h"
 
 namespace ManualWeaponInput
 {
-    Action poll()
-    {
-        // Temporary default provider.
-        // Real key binding will be supplied by Emkejs Mod Core later.
-        return Action::None;
-    }
+    // Provider implementation lives in ManualWeaponInputProvider.cpp.
+    // This file remains the public polling entry point.
 }
