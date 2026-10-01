@@ -5,6 +5,7 @@
 #include <kenshi/Globals.h>
 #include <kenshi/PlayerInterface.h>
 #include "ManualWeaponInput.h"
+#include "DefaultManualWeaponInputProvider.h"
 
 // Manual Weapon Switch runtime
 //
@@ -97,6 +98,9 @@ static void mainLoopHook(GameWorld* world, float time)
 
 __declspec(dllexport) void startPlugin()
 {
+    static ManualWeaponInput::DefaultProvider defaultProvider;
+    ManualWeaponInput::setProvider(&defaultProvider);
+
     if (KenshiLib::SUCCESS != KenshiLib::AddHook(
         KenshiLib::GetRealAddress(&GameWorld::_NV_mainLoop_GPUSensitiveStuff),
         &mainLoopHook,
