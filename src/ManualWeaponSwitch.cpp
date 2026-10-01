@@ -7,14 +7,9 @@
 
 // Manual Weapon Switch runtime
 //
-// This branch intentionally does not use the previous adaptive decision engine.
-// The first goal is a small, reliable RE_Kenshi plugin that can:
-// - read player selected character
-// - receive manual weapon switch commands
-// - switch between equipped primary and secondary weapons
-//
-// Input handling and weapon mutation will be added after confirming the
-// corresponding KenshiLib bindings.
+// v0.1 goal:
+// Switch only between weapons that are already equipped.
+// Inventory is never modified.
 
 static void (*mainLoopOriginal)(GameWorld*, float);
 
@@ -37,14 +32,59 @@ namespace ManualWeaponSwitch
         return ou->player->getSelectedCharacter();
     }
 
+    static bool switchWeapon(Character* character, Item* weapon)
+    {
+        if (!character || !weapon)
+            return false;
+
+        Item* current = character->getCurrentWeapon();
+        if (current == weapon)
+            return true;
+
+        // drawWeapon is the native weapon draw/switch path.
+        // The previous inventory section is required by Kenshi.
+        if (!current)
+        {
+            DebugLog("Manual Weapon Switch: no current weapon section");
+            return false;
+        }
+
+        bool result = character->drawWeapon(weapon, current->inventorySection);
+
+        if (result && character->getCurrentWeapon() == weapon)
+        {
+            DebugLog("Manual Weapon Switch: weapon switched");
+            return true;
+        }
+
+        DebugLog("Manual Weapon Switch: switch failed");
+        return false;
+    }
+
+    static bool switchToPrimary(Character* character)
+    {
+        if (!character || !character->getInventory())
+            return false;
+
+        return switchWeapon(character, character->getInventory()->getPrimaryWeapon());
+    }
+
+    static bool switchToSecondary(Character* character)
+    {
+        if (!character || !character->getInventory())
+            return false;
+
+        return switchWeapon(character, character->getInventory()->getSecondaryWeapon());
+    }
+
     static void update()
     {
         Character* character = getSelectedCharacter();
         if (!character || !character->getInventory())
             return;
 
-        // TODO:
-        // Implement actual weapon switching after validating the RE_Kenshi API.
+        // Input handling will call switchToPrimary/switchToSecondary.
+        // Keep update empty until commands are connected.
     }
 }
 
