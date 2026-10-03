@@ -14,16 +14,10 @@ namespace ManualWeaponInput
             return Action::None;
 
         if (key->isKeyState("AWT_PrimaryWeapon"))
-        {
-            primaryCommand = false;
             return Action::Primary;
-        }
 
         if (key->isKeyState("AWT_SecondaryWeapon"))
-        {
-            secondaryCommand = false;
             return Action::Secondary;
-        }
 
         return Action::None;
     }
