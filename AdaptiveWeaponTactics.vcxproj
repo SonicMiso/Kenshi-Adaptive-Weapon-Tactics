@@ -40,7 +40,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\WeaponProbe.cpp" />
+    <ClCompile Include="src\ManualWeaponSwitch.cpp" />
+    <ClCompile Include="src\ManualWeaponInput.cpp" />
+    <ClCompile Include="src\ManualWeaponInputProvider.cpp" />
+    <ClCompile Include="src\DefaultManualWeaponInputProvider.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>
