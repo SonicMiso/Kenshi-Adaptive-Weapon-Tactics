@@ -11,5 +11,8 @@ namespace ManualWeaponInput
         virtual Action poll() = 0;
     };
 
+    extern bool primaryCommand;
+    extern bool secondaryCommand;
+
     void setProvider(Provider* provider);
 }
