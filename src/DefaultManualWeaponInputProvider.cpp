@@ -1,21 +1,29 @@
 #include "DefaultManualWeaponInputProvider.h"
 
-// RE_Kenshi exposes the active input handler through the global `key` pointer.
-// This provider intentionally remains separate so Emkejs Mod Core can replace it later.
 #include <kenshi/Globals.h>
+#include <kenshi/InputHandler.h>
 
 namespace ManualWeaponInput
 {
+    bool primaryCommand = false;
+    bool secondaryCommand = false;
+
     Action DefaultProvider::poll()
     {
         if (!key)
             return Action::None;
 
         if (key->isKeyState("AWT_PrimaryWeapon"))
+        {
+            primaryCommand = false;
             return Action::Primary;
+        }
 
         if (key->isKeyState("AWT_SecondaryWeapon"))
+        {
+            secondaryCommand = false;
             return Action::Secondary;
+        }
 
         return Action::None;
     }
