@@ -26,7 +26,7 @@ Adaptive Weapon Tactics/
 └── AdaptiveWeaponTactics.dll
 ```
 
-The `.mod` file is a zero-record carrier file used so Kenshi recognizes the mod directory. `RE_Kenshi.json` is the RE_Kenshi plugin manifest and declares the DLL to load.
+The `.mod` file is the standard binary empty-mod carrier used by Kenshi plugin projects so Kenshi recognizes the mod directory. It is not a zero-byte file. `RE_Kenshi.json` is the RE_Kenshi plugin manifest and declares the DLL to load.
 
 ## Installation
 
