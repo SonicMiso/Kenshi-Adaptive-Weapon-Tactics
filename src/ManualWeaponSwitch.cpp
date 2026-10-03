@@ -3,7 +3,10 @@
 #include <kenshi/Character.h>
 #include <kenshi/GameWorld.h>
 #include <kenshi/Globals.h>
+#include <kenshi/InputHandler.h>
 #include <kenshi/PlayerInterface.h>
+#include <ois/OISKeyboard.h>
+
 #include "ManualWeaponInput.h"
 #include "DefaultManualWeaponInputProvider.h"
 
@@ -14,6 +17,7 @@
 // Inventory is never modified.
 
 static void (*mainLoopOriginal)(GameWorld*, float);
+static void (*loadConfigOriginal)(InputHandler*);
 
 namespace ManualWeaponSwitch
 {
@@ -90,6 +94,27 @@ namespace ManualWeaponSwitch
     }
 }
 
+static void loadConfigHook(InputHandler* handler)
+{
+    handler->addCommand(
+        "AWT_PrimaryWeapon",
+        ManualWeaponInput::primaryCommand,
+        OIS::KeyCode::KC_F7,
+        OIS::KeyCode::KC_UNASSIGNED,
+        InputHandler::NONE_MASK,
+        InputHandler::GLOBAL);
+
+    handler->addCommand(
+        "AWT_SecondaryWeapon",
+        ManualWeaponInput::secondaryCommand,
+        OIS::KeyCode::KC_F8,
+        OIS::KeyCode::KC_UNASSIGNED,
+        InputHandler::NONE_MASK,
+        InputHandler::GLOBAL);
+
+    loadConfigOriginal(handler);
+}
+
 static void mainLoopHook(GameWorld* world, float time)
 {
     mainLoopOriginal(world, time);
@@ -102,10 +127,18 @@ __declspec(dllexport) void startPlugin()
     ManualWeaponInput::setProvider(&defaultProvider);
 
     if (KenshiLib::SUCCESS != KenshiLib::AddHook(
+        KenshiLib::GetRealAddress(&InputHandler::loadConfig),
+        &loadConfigHook,
+        &loadConfigOriginal))
+    {
+        ErrorLog("Manual Weapon Switch: could not install input hook");
+    }
+
+    if (KenshiLib::SUCCESS != KenshiLib::AddHook(
         KenshiLib::GetRealAddress(&GameWorld::_NV_mainLoop_GPUSensitiveStuff),
         &mainLoopHook,
         &mainLoopOriginal))
     {
-        ErrorLog("Manual Weapon Switch: could not install hook");
+        ErrorLog("Manual Weapon Switch: could not install main loop hook");
     }
 }
