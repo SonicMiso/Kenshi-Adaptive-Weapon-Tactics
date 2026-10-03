@@ -66,14 +66,14 @@ jobs:
           }
 
           $boost = $boostHeader.Directory.Parent.FullName
-          $boostLibDir = Join-Path $boost "stage\lib"
+          $boostLibDir = Join-Path $boost "stage\\lib"
 
           if (!(Test-Path $boostLibDir)) {
-            throw "Boost stage\lib directory was not found under: $boost"
+            throw "Boost stage\\lib directory was not found under: $boost"
           }
 
           if (!(Get-ChildItem $boostLibDir -Filter "*.lib" -File | Select-Object -First 1)) {
-            throw "Boost stage\lib does not contain any .lib files: $boostLibDir"
+            throw "Boost stage\\lib does not contain any .lib files: $boostLibDir"
           }
 
           Write-Host "KENSHILIB_DIR=$kenshiLib"
@@ -99,9 +99,30 @@ jobs:
           }
           Get-Item $dll | Format-List FullName,Length,LastWriteTime
 
-      - name: Upload DLL artifact
+      - name: Assemble mod package
+        shell: pwsh
+        run: |
+          $packageRoot = Join-Path $env:GITHUB_WORKSPACE "package\\Adaptive Weapon Tactics"
+          if (Test-Path $packageRoot) {
+            Remove-Item $packageRoot -Recurse -Force
+          }
+
+          New-Item -ItemType Directory -Path $packageRoot -Force | Out-Null
+          Copy-Item "$env:GITHUB_WORKSPACE\\Adaptive Weapon Tactics.mod" $packageRoot
+          Copy-Item "$env:GITHUB_WORKSPACE\\RE_Kenshi.json" $packageRoot
+          Copy-Item "$env:GITHUB_WORKSPACE\\build\\AdaptiveWeaponTactics.dll" $packageRoot
+
+          $zip = Join-Path $env:GITHUB_WORKSPACE "AdaptiveWeaponTactics-manual-version.zip"
+          if (Test-Path $zip) {
+            Remove-Item $zip -Force
+          }
+          Compress-Archive -Path $packageRoot -DestinationPath $zip -Force
+          Get-ChildItem $packageRoot | Format-Table Name,Length
+          Get-Item $zip | Format-List FullName,Length
+
+      - name: Upload mod package
         uses: actions/upload-artifact@v4
         with:
           name: AdaptiveWeaponTactics-manual-version
-          path: build/AdaptiveWeaponTactics.dll
+          path: AdaptiveWeaponTactics-manual-version.zip
           if-no-files-found: error
