@@ -125,22 +125,5 @@ static void mainLoopHook(GameWorld* world, float time)
 
 __declspec(dllexport) void startPlugin()
 {
-    static ManualWeaponInput::DefaultProvider defaultProvider;
-    ManualWeaponInput::setProvider(&defaultProvider);
-
-    if (KenshiLib::SUCCESS != KenshiLib::AddHook(
-        KenshiLib::GetRealAddress(&InputHandler::loadConfig),
-        &loadConfigHook,
-        &loadConfigOriginal))
-    {
-        ErrorLog("Manual Weapon Switch: could not install input hook");
-    }
-
-    if (KenshiLib::SUCCESS != KenshiLib::AddHook(
-        KenshiLib::GetRealAddress(&GameWorld::_NV_mainLoop_GPUSensitiveStuff),
-        &mainLoopHook,
-        &mainLoopOriginal))
-    {
-        ErrorLog("Manual Weapon Switch: could not install main loop hook");
-    }
+    DebugLog("Adaptive Weapon Tactics: startPlugin entered");
 }
