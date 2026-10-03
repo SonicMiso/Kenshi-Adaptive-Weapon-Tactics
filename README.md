@@ -26,9 +26,9 @@ Adaptive Weapon Tactics/
 └── AdaptiveWeaponTactics.dll
 ```
 
-The `.mod` file is a zero-record carrier file used so Kenshi recognizes the mod directory. RE_Kenshi reads `RE_Kenshi.json` and loads the DLL listed in its `Plugins` array. This is the standard RE_Kenshi plugin layout. citeturn0search0turn0search8
+The `.mod` file is a zero-record carrier file used so Kenshi recognizes the mod directory. `RE_Kenshi.json` is the RE_Kenshi plugin manifest and declares the DLL to load.
 
-### Installation
+## Installation
 
 1. Install a compatible **RE_Kenshi** release.
 2. Create `Kenshi/mods/Adaptive Weapon Tactics/`.
@@ -39,11 +39,9 @@ The `.mod` file is a zero-record carrier file used so Kenshi recognizes the mod 
 4. Enable **Adaptive Weapon Tactics** in Kenshi's mod list.
 5. Load a game and test F7/F8 with the selected character carrying both primary and secondary weapons.
 
-RE_Kenshi's plugin loader processes `RE_Kenshi.json` for active mods and loads DLLs from the mod directory. citeturn0search4
-
 ## Build
 
-The Visual Studio project targets x64 and links against KenshiLib. The official RE_Kenshi/KenshiLib documentation requires the Visual C++ 2010 x64 compiler ABI (`v100`) for production-compatible builds; the GitHub Actions workflow currently uses `v143` only as a hosted CI compilation check because the standard runner does not provide v100. citeturn0search4
+The Visual Studio project targets x64 and links against KenshiLib. The official RE_Kenshi/KenshiLib build environment requires the Visual C++ 2010 x64 compiler ABI (`v100`) for production-compatible builds. The GitHub Actions workflow currently uses `v143` only as a hosted CI compilation check because the standard runner does not provide v100.
 
 Set:
 
@@ -59,7 +57,7 @@ Then build `Release|x64`.
 - `src/ManualWeaponInput.*` — input abstraction.
 - `src/DefaultManualWeaponInputProvider.*` — current F7/F8 InputHandler provider.
 - `AdaptiveWeaponTactics.vcxproj` — x64 plugin project.
-- `RE_Kenshi.json` — plugin loader manifest.
+- `RE_Kenshi.json` — RE_Kenshi plugin loader manifest.
 - `Adaptive Weapon Tactics.mod` — Kenshi mod carrier file.
 
 ## License
