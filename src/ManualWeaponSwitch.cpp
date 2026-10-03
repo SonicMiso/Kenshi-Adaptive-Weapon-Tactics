@@ -3,6 +3,8 @@
 #include <kenshi/Character.h>
 #include <kenshi/GameWorld.h>
 #include <kenshi/Globals.h>
+#include <kenshi/Inventory.h>
+#include <kenshi/Gear.h>
 #include <kenshi/InputHandler.h>
 #include <kenshi/PlayerInterface.h>
 #include <ois/OISKeyboard.h>
@@ -26,15 +28,15 @@ namespace ManualWeaponSwitch
         if (!ou || !ou->player)
             return nullptr;
 
-        return ou->player->getSelectedCharacter();
+        return ou->player->selectedCharacter.getCharacter();
     }
 
-    static bool switchWeapon(Character* character, Item* weapon)
+    static bool switchWeapon(Character* character, Weapon* weapon)
     {
         if (!character || !weapon)
             return false;
 
-        Item* current = character->getCurrentWeapon();
+        Weapon* current = character->getCurrentWeapon();
         if (current == weapon)
             return true;
 
